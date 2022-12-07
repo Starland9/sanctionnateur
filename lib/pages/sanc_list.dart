@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sanctionnateur/classes/chorist.dart';
-import 'package:sanctionnateur/classes/sanction.dart';
+import 'package:sanctionnateur/pages/sanc_view.dart';
 
 class SnactionsListPage extends StatefulWidget {
   const SnactionsListPage({super.key});
@@ -21,28 +21,27 @@ class _SnactionsListPageState extends State<SnactionsListPage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: sanctionsList.where((element) => !element.fait).map((s) {
-            Chorist chor =
-                chorList.where((element) => element.id == s.choristId).first;
-            return ListTile(
-              isThreeLine: true,
-              title: Text("${chor.lastName} ${chor.firstName}"),
-              subtitle: Text("${s.type} \nCause: ${s.raison}"),
-              trailing: IconButton(
-                onPressed: () => setState(() {
-                  s.fait = true;
-                }),
-                icon: Icon(Icons.check_circle),
-                color: Colors.green,
-              ),
-            );
-          }).toList(),
+          children: chorists.values
+              .where((c) => c.sanctions.isNotEmpty)
+              .map(
+                (c) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    tileColor: Colors.red.shade200,
+                    title: Text("${c.lastName.toUpperCase()} ${c.firstName}"),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SancViewPage(chorist: c),
+                          ));
+                    },
+                  ),
+                ),
+              )
+              .toList(),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
-        label: Text("APPLIQUER LES CHANGEMENTS"),
-        backgroundColor: Colors.red,
       ),
     );
   }

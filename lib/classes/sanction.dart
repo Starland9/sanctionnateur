@@ -1,8 +1,13 @@
+import 'package:hive/hive.dart';
+
+part 'sanction.g.dart';
+
 final List sanctionTypes = [
   "Un Morceau de savon",
   "Un Détergent",
   "Laver les ténues",
   "Essuyer les banc de l'église",
+  "Un carton de craie",
   "Autre"
 ];
 
@@ -14,19 +19,18 @@ final List sanctionsRaisons = [
   "Autre"
 ];
 
+@HiveType(typeId: 2)
 class Sanction {
-  final int id;
-  final int choristId;
-  final String raison;
-  final String type;
-  final DateTime date;
+  @HiveField(1)
+  String raison;
+  @HiveField(2)
+  String type;
+  @HiveField(3)
+  DateTime date;
+  @HiveField(4)
   bool fait;
 
-  Sanction(this.id, this.choristId, this.raison, this.type, this.date, this.fait);
+  Sanction(this.raison, this.type, this.date, this.fait);
 }
 
-final List<Sanction> sanctionsList = [
-  Sanction(1, 1, sanctionsRaisons[0], sanctionTypes[0], DateTime.now(), false),
-  Sanction(2, 1, sanctionsRaisons[2], sanctionTypes[2], DateTime.now(), true),
-  Sanction(3, 2, sanctionsRaisons[1], sanctionTypes[3], DateTime.now(), false),
-];
+var sanctions = Hive.box<Sanction>("sanctions");

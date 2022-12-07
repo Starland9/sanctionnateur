@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 import 'package:sanctionnateur/classes/chorist.dart';
@@ -11,22 +11,12 @@ class AppelPage extends StatefulWidget {
 }
 
 class _AppelPageState extends State<AppelPage> {
-  List<Chorist> localChorList = chorList;
   @override
   Widget build(BuildContext context) {
-    localChorList.sort(((a, b) => a.lastName.compareTo(b.lastName)));
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple,
         title: Text("Faire l'appel"),
-        actions: [
-          IconButton(
-              onPressed: () => setState(() {
-                    localChorList = chorList;
-                  }),
-              icon: Icon(Icons.restore)),
-        ],
       ),
       body: SingleChildScrollView(
         child: Center(
@@ -34,26 +24,27 @@ class _AppelPageState extends State<AppelPage> {
             columns: appelColumnLabels
                 .map((e) => DataColumn(label: Text(e.toString().toUpperCase())))
                 .toList(),
-            rows: localChorList
-                .map((e) => DataRow(cells: [
-                      DataCell(Text(e.lastName)),
-                      DataCell(Text(e.firstName)),
-                      DataCell(Checkbox(
-                          fillColor: MaterialStatePropertyAll(Colors.purple),
-                          value: e.isPresent,
-                          onChanged: (value) => setState(() {
-                                e.lastPresentDate = DateTime.now();
-                              })))
+            rows: chorists.values
+                .map((c) => DataRow(cells: [
+                      DataCell(Text(c.lastName.toUpperCase())),
+                      DataCell(Text(c.firstName)),
+                      DataCell(Switch(
+                          value: c.isPresent,
+                          onChanged: (v) async {
+                            c.lastPresentDate = DateTime.now();
+                            await c.save();
+                            setState(() {});
+                          })),
                     ]))
                 .toList(),
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.purple,
-        onPressed: () {},
-        label: Text("J'ai terminé l'appel"),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   backgroundColor: Colors.purple,
+      //   onPressed: () {},
+      //   label: Text("J'ai terminé l'appel"),
+      // ),
     );
   }
 }

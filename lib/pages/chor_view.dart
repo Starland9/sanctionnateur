@@ -6,6 +6,7 @@ import 'package:sanctionnateur/classes/chorist.dart';
 import 'package:sanctionnateur/classes/sanction.dart';
 import 'package:sanctionnateur/pages/chor_list.dart';
 import 'package:sanctionnateur/pages/home.dart';
+import 'package:sanctionnateur/pages/sanc_view.dart';
 
 class ChorViewPage extends StatefulWidget {
   const ChorViewPage({super.key, required this.chor});
@@ -22,7 +23,7 @@ class _ChorViewPageState extends State<ChorViewPage> {
     final Chorist chor = widget.chor;
     return Scaffold(
       appBar: AppBar(
-        title: Text("${chor.lastName} ${chor.firstName}"),
+        title: Text("${chor.lastName.toUpperCase()} ${chor.firstName}"),
       ),
       body: Center(
         child: Column(
@@ -31,13 +32,28 @@ class _ChorViewPageState extends State<ChorViewPage> {
             Column(
               children: [
                 Text(
-                  "${chor.lastName} ${chor.firstName}",
+                  "${chor.lastName.toUpperCase()} ${chor.firstName.toUpperCase()}",
                   style: Theme.of(context).textTheme.headline2,
                 ),
                 Text(
                   chor.pupitre,
                   style: Theme.of(context).textTheme.headline3,
                 ),
+                Divider(),
+                SizedBox(
+                  height: 10,
+                ),
+                if (chor.sanctions.isNotEmpty)
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SancViewPage(chorist: chor),
+                        ));
+                      },
+                      child: Text(
+                        "${chor.sanctions.length} sanctions en cours",
+                        style: TextStyle(color: Colors.red),
+                      ))
               ],
             ),
             Column(
@@ -47,12 +63,21 @@ class _ChorViewPageState extends State<ChorViewPage> {
                       showDialog(
                         context: context,
                         builder: (context) => SanctionDialog(chorist: chor),
-                      );
+                      ).then((value) {
+                        setState(() {});
+                      });
                     },
                     text: "SANCTIONNER",
                     color: Colors.purple),
                 HomeBtn(
-                    onPress: () {},
+                    onPress: () async {
+                      chorists.delete(chor.key);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChorListPage(),
+                          ));
+                    },
                     text: "SUPPRIMER LE PROFIL",
                     color: Colors.red),
               ],
@@ -82,6 +107,7 @@ class _SanctionDialogState extends State<SanctionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    Chorist chor = widget.chorist;
     return SimpleDialog(
       contentPadding: EdgeInsets.all(20),
       // ignore: prefer_const_literals_to_create_immutables
@@ -134,7 +160,15 @@ class _SanctionDialogState extends State<SanctionDialog> {
         SizedBox(
           height: 20,
         ),
-        DialogBtns(onOk: () {}),
+        DialogBtns(onOk: () {
+          Sanction s = Sanction(raison, sType, DateTime.now(), false);
+          if (autreRaison.text.isNotEmpty) s.raison = autreRaison.text;
+          if (autreType.text.isNotEmpty) s.type = autreType.text;
+          chorists.get(chor.key)?.sanctions.add(s);
+          chor.save();
+
+          Navigator.pop(context);
+        }),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sanctionnateur/pages/appel_list.dart';
 import 'package:sanctionnateur/pages/chor_list.dart';
 import 'package:sanctionnateur/pages/sanc_list.dart';
+import 'package:sanctionnateur/pages/sync.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,12 +21,17 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(
-              "LE SANCTIONNATEUR",
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
+            Column(
+              children: [
+                Image.asset("assets/images/logo.png"),
+                Text(
+                  "LE SANCTIONNATEUR",
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             Column(
               children: [
@@ -59,7 +65,17 @@ class _HomePageState extends State<HomePage> {
                           ));
                     },
                     text: "Voir les sanctions",
-                    color: Colors.red)
+                    color: Colors.red),
+                HomeBtn(
+                    onPress: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SyncPage(),
+                          ));
+                    },
+                    text: "Synchronisation",
+                    color: Colors.yellow.shade900),
               ],
             )
           ],
@@ -95,7 +111,7 @@ class HomeBtn extends StatelessWidget {
         style: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll(color),
           fixedSize: MaterialStatePropertyAll(
-            Size(250, 40),
+            Size(250, 50),
           ),
         ),
       ),

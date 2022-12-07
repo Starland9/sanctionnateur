@@ -19,7 +19,6 @@ class _SyncPageState extends State<SyncPage> {
         options: DefaultFirebaseOptions.currentPlatform,
       );
     } catch (e) {
-      print(e);
       Navigator.of(context).pop();
     }
   }
